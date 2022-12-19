@@ -11,20 +11,21 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Validator from "email-validator";
 
-const LoginForm = ({ navigation }) => {
-  const LoginFormSchema = Yup.object().shape({
-    email: Yup.string().email().required("An email is required"),
-    password: Yup.string()
-      .required()
-      .min(8, "Your password has to have at least 8 characters"),
-  });
+const SignUpSchema = Yup.object().shape({
+  email: Yup.string().email().required("An email is required"),
+  username: Yup.string().required().min(2, "A username is required"),
+  password: Yup.string()
+    .required()
+    .min(8, "Your password has to have at least 8 characters"),
+});
 
+const SignUpForm = ({ navigation }) => {
   return (
     <View style={styles.wrapper}>
       <Formik
-        initialValues={{ email: "", password: "" }}
+        initialValues={{ email: "", password: "", username: "" }}
         onSubmit={(values) => console.log(values)}
-        validationSchema={LoginFormSchema}
+        validationSchema={SignUpSchema}
         validateOnMount={true}
       >
         {({ handleBlur, handleChange, handleSubmit, values, isValid }) => (
@@ -41,7 +42,7 @@ const LoginForm = ({ navigation }) => {
               ]}
             >
               <TextInput
-                placeholder="Phone number, username or email"
+                placeholder="Email"
                 keyboardType="email-adress"
                 textContentType="emailAdress"
                 autoFocus={true}
@@ -56,8 +57,26 @@ const LoginForm = ({ navigation }) => {
               style={[
                 styles.inputField,
                 {
+                  borderColor: 2 > values.username.length || values.username.length < 30 ? "#ccc" : "red",
+                },
+              ]}
+            >
+              <TextInput
+                placeholder="Username"
+                textContentType="username"
+                autoCapitalize="none"
+                placeholderTextColor="#444"
+                onChangeText={handleChange("username")}
+                onBlur={handleBlur("username")}
+                value={values.username}
+              />
+            </View>
+            <View
+              style={[
+                styles.inputField,
+                {
                   borderColor:
-                    values.password.length >= 6  ||
+                    values.password.length >= 6 ||
                     Validator.validate(values.password)
                       ? "#ccc"
                       : "red",
@@ -76,22 +95,19 @@ const LoginForm = ({ navigation }) => {
                 value={values.password}
               />
             </View>
-            <View style={{ alignItems: "flex-end", marginBottom: 30 }}>
-              <Text style={{ color: "#6BB0F5" }}>Forgot password?</Text>
-            </View>
 
             <Pressable
               disabled={!isValid}
               onPress={handleSubmit}
               style={styles.button(isValid)}
             >
-              <Text style={styles.buttonText}>Log In</Text>
+              <Text style={styles.buttonText}>Sign Up</Text>
             </Pressable>
 
             <View style={styles.signupContainer}>
-              <Text>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.push("SignUpScreen")}>
-                <Text style={{ color: "#6BB0F5" }}>Sign Up</Text>
+              <Text>Already have an account? </Text>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text style={{ color: "#6BB0F5" }}>Log In</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -100,6 +116,8 @@ const LoginForm = ({ navigation }) => {
     </View>
   );
 };
+
+export default SignUpForm;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -117,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: isValid ? "#0096F6" : "#9ACAF7",
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 42,
+    minHeight: 42,    
     borderRadius: 4,
   }),
   buttonText: {
@@ -132,5 +150,3 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
 });
-
-export default LoginForm;
