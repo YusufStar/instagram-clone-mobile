@@ -34,13 +34,13 @@ export const bottomTabIcons = [
   }
 ]
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={[styles.container, {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 25 : 0
     }]}>
-        <Header/>
+        <Header navigation={navigation}/>
         <Stories/>
         <ScrollView>
           {Posts.map((post, index) => (
